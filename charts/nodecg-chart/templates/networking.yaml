@@ -9,9 +9,11 @@ spec:
   - name: {{ $relname }}-dashboard
     port: 9090
     targetPort: 9090
+{{ if .Values.networking.controller }}
   - name: {{ $relname }}-controller
     port: 80
     targetPort: 80
+{{ end }}
   selector:
     app: {{ $relname }}-nodecg
 {{ if .Values.networking.dashboard }}
