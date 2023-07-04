@@ -12,6 +12,20 @@ spec:
     requests:
       storage: 10Gi
   storageClassName: do-block-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-rtmp-controller-claim
+  labels:
+    app: {{ .Release.Name }}-rtmp-controller
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: do-block-storage
 {{ else }}
 apiVersion: v1
 kind: PersistentVolume

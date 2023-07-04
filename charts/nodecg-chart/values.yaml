@@ -1,13 +1,24 @@
 target: "digitalocean"
-container:
-  # registry is the registry you want to use. If private you need to include imagePullSecrets
-  registry: ghcr.io/rodg
-  # name is the name of the container in your registry
-  name: nodecg-base
-  version: latest
+deployments:
   # imagePullSecrets the name of the image pull secrets if needed
   imagePullSecrets: please-remake
+  dashboard:
+    container: ghcr.io/rodg/nodecg-base
+    version: latest
+    port: 9090
+  rtmp:
+    controller:
+      container: ghcr.io/rodg/rtmp-controller
+      version: latest
+      port: 80
+      env:
+        RTMP_DOMAIN: popola.dev
+    server:
+      enabled: false
 networking:
-  ingress: true
-  host: example.com
-  portNumber: 9090
+  dashboard:
+    host: example.com
+    port: 9090
+  controller:
+    host: api.example.com
+    port: 80

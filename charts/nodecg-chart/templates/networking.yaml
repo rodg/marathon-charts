@@ -1,32 +1,62 @@
+{{- $relname := .Release.Name -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-nodecg
+  name: {{ $relname }}-nodecg
 spec:
   type: ClusterIP
   ports:
-  - port: {{ .Values.networking.portNumber}}
-    targetPort: {{ .Values.networking.portNumber}}
+  - name: {{ $relname }}-dashboard
+    port: 9090
+    targetPort: 9090
+  - name: {{ $relname }}-controller
+    port: 80
+    targetPort: 80
   selector:
-    app: {{ .Release.Name }}-nodecg
-{{ if .Values.networking.ingress }}
+    app: {{ $relname }}-nodecg
+{{ if .Values.networking.dashboard }}
+{{- with .Values.networking.dashboard }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-ingress
+  name: {{ $relname }}-dash-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-  - host: {{ .Values.networking.host | quote}}
+  - host: {{ .host | quote}}
     http:
       paths:
       - pathType: Prefix
         path: "/"
         backend:
           service:
-            name: {{ .Release.Name }}-nodecg
+            name: {{ $relname }}-nodecg
             port:
-              number: {{ .Values.networking.portNumber}}
+              number: {{ .port }}
+{{ end }}
+{{ end }}
+{{ if .Values.networking.controller }}
+{{- with .Values.networking.controller }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $relname }}-rtmp-controller-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: {{ .host | quote}}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: {{ $relname }}-rtmp-controller
+            port:
+              number: {{ .port }}
+{{ end }}
 {{ end }}

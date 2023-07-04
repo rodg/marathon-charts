@@ -1,35 +1,84 @@
+{{- $relname := .Release.Name -}}
+{{- $pullsecrets := .Values.deployments.imagePullSecrets -}}
+{{- $target := .Values.target -}}
+{{- with .Values.deployments.dashboard }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-nodecg
+  name: {{ $relname }}-nodecg
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-nodecg
+      app: {{ $relname }}-nodecg
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-nodecg
+        app: {{ $relname }}-nodecg
     spec:
       containers:
-      - name: {{ .Release.Name }}-nodecg
-        image: {{ .Values.container.registry }}/{{.Values.container.name}}:{{ .Values.container.version }}
+      - name: {{ $relname }}-nodecg
+        image: {{ .container }}:{{ .version }}
         imagePullPolicy: Always
         ports:
-        - containerPort: {{ .Values.networking.portNumber}}
+        - containerPort: {{ .port }}
         volumeMounts:
             - mountPath: /nodecg/db
-              name: {{ .Release.Name }}-nodecg-db
+              name: {{ $relname }}-nodecg-db
             - mountPath: /nodecg/logs
-              name: {{ .Release.Name }}-nodecg-db
-      {{- if ne .Values.target "digitalocean" }}
+              name: {{ $relname }}-nodecg-db
+      {{- if ne $target "digitalocean" }}
       imagePullSecrets: 
-        - name: {{ .Values.container.registry }}
+        - name: {{ $pullsecrets }}
       {{- end }}
       volumes:
-        - name: {{ .Release.Name }}-nodecg-db
+        - name: {{ $relname }}-nodecg-db
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-claim
+            claimName: {{ $relname }}-claim
+{{- end }}
+{{- if .Values.deployments.rtmp.controller }}
+{{- with .Values.deployments.rtmp.controller }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $relname }}-rtmp-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $relname }}-rtmp-controller
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ $relname }}-rtmp-controller
+    spec:
+      containers:
+      - name: {{ $relname }}-rtmp-controller
+        image: {{ .container }}:{{ .version }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .port}}
+        env:
+        {{- range $key, $val := .env }}
+          - name: {{ $key }}
+            value: {{ $val | quote}}
+        {{- end }}
+        volumeMounts:
+            - mountPath: /code/db
+              name: {{ $relname }}-rtmp-controller-db
+      volumes:
+        - name: {{ $relname }}-rtmp-controller-db
+          persistentVolumeClaim:
+            claimName: {{ $relname }}-rtmp-controller-claim
+      {{- if ne $target "digitalocean" }}
+      imagePullSecrets: 
+        - name: {{ $pullsecrets }}
+      {{- end }}
+---
+{{- end }}
+{{- end }}
