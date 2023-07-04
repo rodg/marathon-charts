@@ -6,7 +6,7 @@ container:
   name: nodecg-base
   version: latest
   # imagePullSecrets the name of the image pull secrets if needed
-  imagePullSecrets: some-nice-name
+  imagePullSecrets: changing-something
 networking:
   ingress: true
   host: example.com
