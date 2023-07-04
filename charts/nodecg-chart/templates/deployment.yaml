@@ -27,7 +27,7 @@ spec:
               name: {{ .Release.Name }}-nodecg-db
       {{- if ne .Values.target "digitalocean" }}
       imagePullSecrets: 
-        - name: {{ Values.container.registry }}
+        - name: {{ .Values.container.registry }}
       {{- end }}
       volumes:
         - name: {{ .Release.Name }}-nodecg-db
