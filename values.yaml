@@ -1,0 +1,13 @@
+target: "digitalocean"
+container:
+  # registry is the registry you want to use. If private you need to include imagePullSecrets
+  registry: ghcr.io/rodg
+  # name is the name of the container in your registry
+  name: nodecg-base
+  version: latest
+  # imagePullSecrets the name of the image pull secrets if needed
+  imagePullSecrets: some-nice-name
+networking:
+  ingress: true
+  host: example.com
+  portNumber: 9090

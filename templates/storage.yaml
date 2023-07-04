@@ -1,0 +1,44 @@
+{{ if eq .Values.target "digitalocean"}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-claim
+  labels:
+    app: {{ .Release.Name }}-nodecg
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: do-block-storage
+{{ else }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nodecg-pv
+  labels:
+    app: {{ .Release.Name }}-nodecg
+    test: {{ .Release.Name }}-nodecg
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 10Gi
+  hostPath:
+    path: /data/pv0001/
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-claim
+  labels:
+    app: {{ .Release.Name }}-nodecg
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+{{ end }}

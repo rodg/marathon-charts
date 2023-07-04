@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nodecg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-nodecg
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-nodecg
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-nodecg
+        image: {{ .Values.container.registry }}/{{.Values.container.name}}:{{ .Values.container.version }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.networking.portNumber}}
+        volumeMounts:
+            - mountPath: /nodecg/db
+              name: {{ .Release.Name }}-nodecg-db
+            - mountPath: /nodecg/logs
+              name: {{ .Release.Name }}-nodecg-db
+      {{- if ne .Values.target "digitalocean" }}
+      imagePullSecrets: 
+        - name: {{ Values.container.registry }}
+      {{- end }}
+      volumes:
+        - name: {{ .Release.Name }}-nodecg-db
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-claim
