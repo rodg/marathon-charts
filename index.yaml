@@ -3,6 +3,16 @@ entries:
   nodecg-chart:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-04-20T17:42:10.914138053Z"
+    description: A Helm chart for Kubernetes
+    digest: 1dfc9bac22a5e5f45be598b9c86c45b60bd70340fb7877fe6344396a4bf5e3e6
+    name: nodecg-chart
+    type: application
+    urls:
+    - https://github.com/rodg/marathon-charts/releases/download/nodecg-chart-0.1.5/nodecg-chart-0.1.5.tgz
+    version: 0.1.5
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2023-07-04T17:46:18.694739484Z"
     description: A Helm chart for Kubernetes
     digest: 9e159cc34ee6e0d213173a6ac97c04e20adb7b187ad2c5834446f0478b0d4897
@@ -41,4 +51,4 @@ entries:
     urls:
     - https://github.com/rodg/marathon-charts/releases/download/nodecg-chart-0.1.1/nodecg-chart-0.1.1.tgz
     version: 0.1.1
-generated: "2023-07-04T17:46:18.694754685Z"
+generated: "2025-04-20T17:42:10.914167117Z"
